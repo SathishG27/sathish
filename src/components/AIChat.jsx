@@ -61,8 +61,8 @@ const AIChat = () => {
       utterance.pitch = 1.3; // Sweeter, slightly higher pitch
       utterance.rate = 1.05; // Gentle, clear speed
     } else {
-      utterance.pitch = 1.2;
-      utterance.rate = 1.0;
+      utterance.pitch = 1.3;
+      utterance.rate = 1.05;
     }
     
     window.speechSynthesis.speak(utterance);
