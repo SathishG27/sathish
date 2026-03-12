@@ -59,7 +59,6 @@ export const getAIResponse = async (messages) => {
 
     const localMatch = getLocalResponse(lastUserMessage);
     if (localMatch) {
-        await new Promise(r => setTimeout(r, 450));
         return localMatch;
     }
 

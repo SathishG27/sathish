@@ -33,62 +33,64 @@ const AIChat = () => {
   };
 
   useEffect(() => {
-    if (window.speechSynthesis) window.speechSynthesis.getVoices();
+    const loadVoices = () => window.speechSynthesis.getVoices();
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
   }, []);
 
   const speak = (text) => {
     if (!window.speechSynthesis || !isVoiceEnabled) return;
     
-    const utter = () => {
-      window.speechSynthesis.cancel();
-      const cleanText = text.replace(/\[.*?\]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      const voices = window.speechSynthesis.getVoices();
-      
-      const profVoice = voices.find(v => 
-        (v.name.includes('Female') || v.name.includes('UK English') || v.name.includes('Zira') || v.name.includes('Samantha')) && 
-        v.lang.startsWith('en')
-      ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+    // Cancel any ongoing speech immediately before starting new one
+    window.speechSynthesis.cancel();
+    
+    const cleanText = text.replace(/\[.*?\]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Find best female/english voice
+    const profVoice = voices.find(v => 
+      (v.name.includes('Female') || v.name.includes('UK English') || v.name.includes('Zira') || v.name.includes('Samantha')) && 
+      v.lang.startsWith('en')
+    ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
 
-      if (profVoice) {
-        utterance.voice = profVoice;
-        utterance.pitch = 1.3; // Sweeter, slightly higher pitch
-        utterance.rate = 1.05; // Gentle, clear speed
-        window.speechSynthesis.speak(utterance);
-      }
-    };
-
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = utter;
+    if (profVoice) {
+      utterance.voice = profVoice;
+      utterance.pitch = 1.3; // Sweeter, slightly higher pitch
+      utterance.rate = 1.05; // Gentle, clear speed
     } else {
-      utter();
+      utterance.pitch = 1.2;
+      utterance.rate = 1.0;
     }
+    
+    window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
     if (!hasWelcomed) {
-      const showTimer = setTimeout(() => setShowSplash(true), 800);
-
+      setShowSplash(true);
+      
       const handleInitialStart = () => {
-        if (!hasWelcomed && showSplash) {
+        if (!hasWelcomed) {
           setHasWelcomed(true);
           const msg = `Hi! I'm Friday, your personal assistant. I can help you learn about my boss's work, experience, and how he uses AI tools to build projects fast. What can I help you with today?`;
           speak(msg);
           window.removeEventListener('click', handleInitialStart);
-          window.removeEventListener('scroll', handleInitialStart);
+          window.removeEventListener('touchstart', handleInitialStart);
         }
       };
 
       window.addEventListener('click', handleInitialStart);
-      window.addEventListener('scroll', handleInitialStart);
+      window.addEventListener('touchstart', handleInitialStart);
 
       return () => {
-        clearTimeout(showTimer);
         window.removeEventListener('click', handleInitialStart);
-        window.removeEventListener('scroll', handleInitialStart);
+        window.removeEventListener('touchstart', handleInitialStart);
       };
     }
-  }, [hasWelcomed, setHasWelcomed, showSplash]);
+  }, [hasWelcomed, setHasWelcomed]);
 
   const handleSend = async (textOverride) => {
     const content = textOverride || input;
@@ -107,7 +109,7 @@ const AIChat = () => {
       speak(aiContent);
 
       if (aiContent.includes('[ACTION:DOWNLOAD_RESUME]')) {
-        setTimeout(downloadResume, 1000);
+        downloadResume();
       }
     } catch (error) {
       console.error(error);
