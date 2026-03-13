@@ -23,7 +23,7 @@ const About = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Personal Story & Details */}
         <div className="lg:col-span-7 space-y-12">
-          <section className="p-8 bg-card border border-border rounded-[2.5rem] shadow-sm relative overflow-hidden">
+          <section data-tour="about-identity" className="p-8 bg-card border border-border rounded-[2.5rem] shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-5 rotate-12">
                <User size={120} />
             </div>
@@ -54,7 +54,7 @@ const About = () => {
 
         {/* Right Column: Skills Grid */}
         <div className="lg:col-span-5 space-y-10">
-          <div className="space-y-6">
+          <div className="space-y-6" data-tour="about-skills">
             <h2 className="text-2xl font-black flex items-center gap-3">
                <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center">
                   <Cpu size={22} />

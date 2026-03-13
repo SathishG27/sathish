@@ -20,7 +20,7 @@ const Portfolio = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10" data-tour="portfolio-projects">
         {projects.map((project, index) => (
           <motion.div 
             key={index}
@@ -81,7 +81,7 @@ const Portfolio = () => {
         ))}
       </div>
 
-      <section className="bg-gradient-to-br from-primary to-indigo-700 rounded-[4rem] p-16 text-center text-white relative overflow-hidden shadow-2xl">
+      <section data-tour="portfolio-contact" className="bg-gradient-to-br from-primary to-indigo-700 rounded-[4rem] p-16 text-center text-white relative overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 p-10 opacity-10">
            <Sparkles size={160} />
         </div>

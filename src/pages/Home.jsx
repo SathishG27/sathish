@@ -59,16 +59,32 @@ const Home = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center w-full px-4"
+        className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center w-full px-4 relative"
       >
-        <button
-          onClick={startTour}
-          className="group relative w-full sm:w-auto overflow-hidden rounded-full bg-primary text-white font-black text-[15px] sm:text-[17px] tracking-wide px-8 sm:px-12 py-5 sm:py-6 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
-        >
-          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <Navigation size={22} className="relative z-10 group-hover:rotate-12 transition-transform" />
-          <span className="relative z-10 uppercase tracking-widest">Start Guided Tour</span>
-        </button>
+        <div className="relative group/btn">
+          {/* Animated Call-to-Action Badge */}
+          <motion.div 
+            initial={{ y: 0 }}
+            animate={{ y: [-10, 0, -10] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg z-20 pointer-events-none"
+          >
+            Click to start AI tour
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rotate-45" />
+          </motion.div>
+
+          {/* Pulse Effect Background */}
+          <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl animate-pulse group-hover/btn:scale-110 transition-transform" />
+
+          <button
+            onClick={startTour}
+            className="group relative w-full sm:w-auto overflow-hidden rounded-full bg-primary text-white font-black text-[15px] sm:text-[17px] tracking-wide px-8 sm:px-12 py-5 sm:py-6 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <Navigation size={22} className="relative z-10 group-hover:rotate-12 transition-transform" />
+            <span className="relative z-10 uppercase tracking-widest">Start Guided Tour</span>
+          </button>
+        </div>
 
         <Link
           to="/portfolio"

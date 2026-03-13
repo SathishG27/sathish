@@ -32,6 +32,7 @@ const Resume = () => {
           </p>
         </div>
         <motion.button 
+          data-tour="resume-download"
           whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           className="w-full sm:w-auto flex items-center justify-center gap-3 bg-primary text-primary-foreground px-8 py-4 rounded-2xl sm:rounded-[1.5rem] font-bold shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all"
           onClick={handleDownload}
@@ -41,7 +42,7 @@ const Resume = () => {
       </div>
 
       {/* Experience Timeline */}
-      <section className="space-y-12">
+      <section className="space-y-12" data-tour="resume-experience">
         <h2 className="text-3xl font-black flex items-center gap-4">
           <div className="w-12 h-12 bg-indigo-500 rounded-2xl text-white flex items-center justify-center shadow-lg">
             <Briefcase size={24} />
