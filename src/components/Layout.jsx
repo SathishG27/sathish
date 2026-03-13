@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import AIChat from './AIChat';
+import AIGuidedTour from './AIGuidedTour';
 
 const Layout = () => {
   return (
@@ -10,6 +11,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <AIChat />
+      <AIGuidedTour />
     </div>
   );
 };

@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex justify-between h-20 items-center">
           <div className="flex-shrink-0 flex items-center gap-2 group">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2" data-tour="navbar-logo">
               <div className="w-10 h-10 bg-gradient-to-tr from-primary to-cyan-500 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
                 <Rocket size={20} />
               </div>
@@ -32,7 +32,7 @@ const Navbar = () => {
           </div>
           
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-10" data-tour="nav-links">
             {navLinks.map((link) => (
               <Link
                 key={link.name}

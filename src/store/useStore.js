@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+// Existing store wrapped around the new properties
 export const useStore = create((set) => ({
     // Theme State
     theme: localStorage.getItem('theme') || 'dark',
@@ -36,6 +37,13 @@ export const useStore = create((set) => ({
     // Error handling state
     aiError: null,
     setAiError: (error) => set({ aiError: error }),
+
+    // AI Tour State (React Joyride)
+    runTour: false,
+    tourStepIndex: 0,
+    startTour: () => set({ runTour: true, tourStepIndex: 0, hasWelcomed: true }),
+    stopTour: () => set({ runTour: false }),
+    setTourStepIndex: (index) => set({ tourStepIndex: index })
 }));
 
 // Initialize theme on load

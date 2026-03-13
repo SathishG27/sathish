@@ -1,19 +1,34 @@
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolioData';
-import { Briefcase, FolderCode, GraduationCap, ChevronRight, Sparkles } from 'lucide-react';
+import { Briefcase, FolderCode, GraduationCap, ChevronRight, Sparkles, Navigation, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useStore } from '../store/useStore';
 
 const Home = () => {
   const { personalInfo, stats } = portfolioData;
+  const startTour = useStore(state => state.startTour);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <div className="space-y-24 py-10 relative overflow-hidden">
-      {/* Background Orbs for better aesthetic */}
-      <div className="absolute top-20 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-20 -right-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl -z-10" />
+    <div className="pt-24 md:pt-32 pb-16 px-4 sm:px-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-500/10 blur-[100px]" />
+      </div>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center text-center space-y-8 pt-16">
+      <motion.div
+        data-tour="hero-intro"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full max-w-5xl mx-auto text-center"
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -37,30 +52,41 @@ const Home = () => {
             Crafting the future as a <span className="text-foreground">Digital Transformation Engineer</span> with intelligent, human-centric web solutions.
           </p>
         </motion.div>
+      </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-5 pt-4"
+      {/* Quick Action Buttons */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+        className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center w-full px-4"
+      >
+        <button
+          onClick={startTour}
+          className="group relative w-full sm:w-auto overflow-hidden rounded-full bg-primary text-white font-black text-[15px] sm:text-[17px] tracking-wide px-8 sm:px-12 py-5 sm:py-6 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
         >
-          <Link
-            to="/portfolio"
-            className="group bg-primary text-primary-foreground px-10 py-4 rounded-full font-bold flex items-center gap-2 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1"
-          >
-            Explore Projects <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            to="/resume"
-            className="border-2 border-border bg-background/50 backdrop-blur-sm px-10 py-4 rounded-full font-bold hover:bg-secondary transition-all hover:border-primary/50"
-          >
-            View Experience
-          </Link>
-        </motion.div>
-      </section>
+          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <Navigation size={22} className="relative z-10 group-hover:rotate-12 transition-transform" />
+          <span className="relative z-10 uppercase tracking-widest">Start Guided Tour</span>
+        </button>
+
+        <Link
+          to="/portfolio"
+          className="w-full sm:w-auto px-8 sm:px-12 py-5 sm:py-6 rounded-full border-2 border-border text-foreground font-black text-[15px] sm:text-[17px] uppercase tracking-widest hover:border-primary hover:bg-primary/5 transition-all text-center flex items-center justify-center gap-3 group"
+        >
+          <span>View Work</span>
+          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </motion.div>
 
       {/* Stats Section */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <motion.div
+        data-tour="hero-stats"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="mt-20 sm:mt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl opacity-80"
+      >
         {[
           { icon: <Briefcase size={28} />, value: stats.experience, label: "Professional Experience", color: "from-indigo-500 to-indigo-600" },
           { icon: <FolderCode size={28} />, value: stats.projects, label: "Completed Projects", color: "from-cyan-500 to-cyan-600" },
@@ -83,10 +109,10 @@ const Home = () => {
              </div>
           </motion.div>
         ))}
-      </section>
+      </motion.div>
 
       {/* Feature Intro */}
-      <section className="max-w-4xl mx-auto bg-gradient-to-br from-secondary/50 to-background p-12 rounded-[3rem] border border-border text-center relative overflow-hidden">
+      <section className="mt-20 max-w-4xl mx-auto bg-gradient-to-br from-secondary/50 to-background p-12 rounded-[3rem] border border-border text-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-cyan-500 to-primary" />
         <h2 className="text-4xl font-black mb-6">Innovative Problem Solving</h2>
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-medium">

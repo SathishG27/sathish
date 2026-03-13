@@ -1,25 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, User, Bot, Loader2, Mic, MicOff, Volume2, VolumeX, Trash2, Stars, Sparkles, Download } from 'lucide-react';
+import { MessageSquare, X, Send, User, Bot, Loader2, Mic, MicOff, Volume2, VolumeX, Trash2, Stars, Sparkles, Download, Calendar, Code2, Database } from 'lucide-react';
 import { getAIResponse } from '../services/aiService';
 import { portfolioData } from '../data/portfolioData';
 import resumePdf from '../data/resume.pdf';
+import { useAIVoice } from '../hooks/useAIVoice';
 
 // Friday's Cute 3D Female Avatar
 const FRIDAY_AVATAR = "/friday_female_3d_avatar.png";
 
 const AIChat = () => {
-  const { isChatOpen, toggleChat, setChatOpen, messages, addMessage, clearMessages, hasWelcomed, setHasWelcomed } = useStore();
+  const { isChatOpen, toggleChat, setChatOpen, messages, addMessage, hasWelcomed, setHasWelcomed } = useStore();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
-  const [showSplash, setShowSplash] = useState(false);
   
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
   const AI_NAME = "Friday";
+  const { speak } = useAIVoice();
 
   // Handle Resume Download
   const downloadResume = () => {
@@ -40,62 +41,9 @@ const AIChat = () => {
     }
   }, []);
 
-  const speak = (text) => {
-    if (!window.speechSynthesis || !isVoiceEnabled) return;
-    
-    // Cancel any ongoing speech immediately before starting new one
-    window.speechSynthesis.cancel();
-    
-    const cleanText = text.replace(/\[.*?\]/g, '');
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    const voices = window.speechSynthesis.getVoices();
-    
-    // Find best female/english voice
-    const profVoice = voices.find(v => 
-      (v.name.includes('Female') || v.name.includes('UK English') || v.name.includes('Zira') || v.name.includes('Samantha')) && 
-      v.lang.startsWith('en')
-    ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
-
-    if (profVoice) {
-      utterance.voice = profVoice;
-      utterance.pitch = 1.3; // Sweeter, slightly higher pitch
-      utterance.rate = 1.05; // Gentle, clear speed
-    } else {
-      utterance.pitch = 1.3;
-      utterance.rate = 1.05;
-    }
-    
-    window.speechSynthesis.speak(utterance);
-  };
-
-  useEffect(() => {
-    if (!hasWelcomed) {
-      setShowSplash(true);
-      
-      const handleInitialStart = () => {
-        if (!hasWelcomed) {
-          setHasWelcomed(true);
-          const msg = `Hi! I'm Friday, your personal assistant. I can help you learn about my boss's work, experience, and how he uses AI tools to build projects fast. What can I help you with today?`;
-          speak(msg);
-          window.removeEventListener('click', handleInitialStart);
-          window.removeEventListener('touchstart', handleInitialStart);
-        }
-      };
-
-      window.addEventListener('click', handleInitialStart);
-      window.addEventListener('touchstart', handleInitialStart);
-
-      return () => {
-        window.removeEventListener('click', handleInitialStart);
-        window.removeEventListener('touchstart', handleInitialStart);
-      };
-    }
-  }, [hasWelcomed, setHasWelcomed]);
-
   const handleSend = async (textOverride) => {
     const content = textOverride || input;
     if (!content.trim() || isLoading) return;
-    if (showSplash) setShowSplash(false);
 
     const userMsg = { role: 'user', content };
     addMessage(userMsg);
@@ -147,60 +95,9 @@ const AIChat = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {showSplash && !isChatOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/20 backdrop-blur-2xl p-4 sm:p-6"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className="bg-card border border-primary/20 p-8 sm:p-12 rounded-[3rem] sm:rounded-[4rem] shadow-2xl max-w-xl w-full text-center space-y-6 sm:space-y-8 relative"
-            >
-              <button 
-                onClick={() => setShowSplash(false)}
-                className="absolute top-4 right-4 sm:top-8 sm:right-8 p-2 sm:p-3 hover:bg-secondary rounded-full transition-colors text-muted-foreground"
-              >
-                <X size={20} className="sm:w-6 sm:h-6" />
-              </button>
-
-              <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="w-28 h-28 sm:w-40 sm:h-40 mx-auto rounded-full border-4 border-primary p-1 overflow-hidden shadow-2xl bg-secondary/20"
-              >
-                <img 
-                  src={FRIDAY_AVATAR} 
-                  alt="Friday" 
-                  className="w-full h-full object-cover rounded-full" 
-                  onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=F&background=6366f1&color=fff"; }}
-                />
-              </motion.div>
-
-              <div className="space-y-3 sm:space-y-4">
-                <h2 className="text-3xl sm:text-5xl font-black italic">Hi, I'm <span className="text-primary">{AI_NAME}</span></h2>
-                <p className="text-lg sm:text-xl text-muted-foreground font-bold leading-relaxed px-2 sm:px-0">
-                  "I'm your cute 3D assistant! Shall we explore my boss's professional journey together?"
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:gap-4 pt-4 sm:pt-6">
-                 <button 
-                  onClick={() => { setChatOpen(true); setShowSplash(false); }}
-                  className="bg-primary text-white py-4 sm:py-6 rounded-2xl sm:rounded-3xl font-black text-xl sm:text-2xl shadow-xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all uppercase"
-                >
-                  Let's Chat!
-                </button>
-                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Click anywhere to hear me</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end">
         <motion.button 
+          data-tour="ai-chat-trigger"
           whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
           onClick={toggleChat} 
           className="relative w-16 h-16 sm:w-24 sm:h-24 group"
